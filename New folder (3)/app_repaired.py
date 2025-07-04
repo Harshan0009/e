@@ -230,24 +230,25 @@ elif menu == "📊 Dashboard":
     else:
         tab1, tab2 = st.tabs(["📊 Monthly Summary", "📅 Daily View"])
 
-        # --- Monthly Summary ---
-        with tab1:
-            month = st.selectbox("Select Month", sorted(attendance["Date"].str[:7].unique(), reverse=True))
+# --- Monthly Summary ---
+with tab1:
+    month = st.selectbox("Select Month", sorted(attendance["Date"].str[:7].unique(), reverse=True))
 
     if not attendance.empty and "Date" in attendance.columns:
         attendance["Date"] = attendance["Date"].astype(str)
 
     monthly = attendance[attendance["Date"].str.startswith(month)]
-            counts = monthly.groupby(["ID", "Status"]).size().unstack(fill_value=0)
-            for s in ["Present", "Absent", "Half Day", "Company Holiday", "Sunday"]:
-                if s not in counts.columns:
-                    counts[s] = 0
-            summary = employees.set_index("ID").join(counts).fillna(0)
-            summary["Paid Absents"] = summary["Absent"].apply(lambda x: min(x, 2))
-            summary["Unpaid Absents"] = summary["Absent"].apply(lambda x: max(0, x - 2))
-            st.dataframe(summary.reset_index()[[
-                "ID", "Name", "Present", "Absent", "Paid Absents", "Unpaid Absents", "Half Day", "Company Holiday", "Sunday"
-            ]])
+    counts = monthly.groupby(["ID", "Status"]).size().unstack(fill_value=0)
+    for s in ["Present", "Absent", "Half Day", "Company Holiday", "Sunday"]:
+        if s not in counts.columns:
+            counts[s] = 0
+    summary = employees.set_index("ID").join(counts).fillna(0)
+    summary["Paid Absents"] = summary["Absent"].apply(lambda x: min(x, 2))
+    summary["Unpaid Absents"] = summary["Absent"].apply(lambda x: max(0, x - 2))
+    st.dataframe(summary.reset_index()[[
+        "ID", "Name", "Present", "Absent", "Paid Absents", "Unpaid Absents", "Half Day", "Company Holiday", "Sunday"
+    ]])
+
 
         # --- Daily View ---
         with tab2:
