@@ -160,11 +160,6 @@ elif menu == "👥 Employees":
             st.session_state["add_emp_name"] = ""
             st.session_state["add_emp_salary"] = 0.0
 
-
-
-            else:
-                st.warning("⚠️ Employee ID already exists!")
-
     st.write("Employees")
     edited = st.data_editor(employees, use_container_width=True, num_rows="dynamic")
     if st.button("💾 Update"):
